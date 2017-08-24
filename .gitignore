@@ -1,0 +1,14 @@
+
+/.gradle
+/build
+
+/.classpath
+/.project
+/.settings
+/bin/
+
+/caches
+/local.properties
+.*.swp
+.DS_Store
+/src/main/liberty/config/server.env

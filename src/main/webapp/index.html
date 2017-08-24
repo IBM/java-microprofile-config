@@ -1,0 +1,65 @@
+<html>
+  <body>
+    <h1>Welcome to the MicroProfile Config demonstrator application</h1>
+    <p>Please see below for some information on each of the technologies used in this application.</p>
+    <div id="technologies">
+      <h2>MicroProfile Config</h2>
+      <p>
+        Inside the project there is an application.rest package containing the
+        <code>ConfigRestEndpoint</code>
+        class. This adds a REST endpoint which you can access at <a
+          href="rest/config">rest/config</a>. It will return a JSON representation
+          of all of the available configuration properties. An individual configuration property
+          can be accessed by adding the property name at the end of the URL. For example
+          <a href="rest/config/java.home">rest/config/java.home</a>.
+      </p>
+      <p>
+        The project also includes an application.configsource package containing the
+        <code>TimeConfigSource</code>
+        class. This class is a 
+        <a href="https://github.com/eclipse/microprofile-config/blob/master/api/src/main/java/org/eclipse/microprofile/config/spi/ConfigSource.java">
+        ConfigSource</a> implementation which returns the current time under the property name
+        time.now.
+      </p>
+      <p>
+        The project also includes an application.converter package containing the
+        <code>PatternConverter</code> and <code>ResourceBundleConverter</code>
+        classes. These classes is are
+        <a href="https://github.com/eclipse/microprofile-config/blob/master/api/src/main/java/org/eclipse/microprofile/config/spi/Converter.java">
+        Converter</a> implementations which convert property values from type String to the type
+        supported by the converter.
+      </p>
+      <p>
+        Finally, the application.rest package contains the
+        <code>LibertyRestEndpoint</code>
+        class. This adds a REST endpoint which you can access at <a
+          href="rest">rest</a>. This class demonstrates using dependency injection to
+          receive configuration properties as well as conversion through the Converter implementations
+          as well as using javax.inject.Provider to get dynamic property values like time.now.
+      </p>
+      <p>
+        There is also a test classes named
+        <code>it.config.ConfigRestEndpointTest</code> and <code>it.rest.LibertyRestEndpointTest</code>
+        that will test the REST endpoints to ensure they is working.
+      </p>
+      <p>
+          For information on the Config feature of MicroProfile, see
+          <a href="http://microprofile.io/project/eclipse/microprofile-config">MicroProfile Config</a>.
+      </p>
+      <p>
+          The <a href="http://microprofile.io/">MicroProfile project</a> is an open
+          community with the aim of optimizing Enterprise Java for a microservices
+          architecture.  MicroProfile will be evolving with guidance from the community.
+      </p>
+      <p>
+          For the complete feature documentation, see the
+          <a href="http://www.ibm.com/support/knowledgecenter/en/SSEQTP_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/rwlp_feature_microProfile-1.0.html">microProfile-1.0</a>
+          feature description in IBM Knowledge Center.
+      </p>
+      <p>
+          If you want to share your thoughts you can post straight to the
+          <a href="https://groups.google.com/forum/#!forum/microprofile">MicroProfile Google group</a>.
+      </p>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:1.0.1'
+    }
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'war'
+apply plugin: 'liberty'
+
+group = 'com.ibm.developer.code'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    appName = 'Config'
+    testServerHttpPort = 9080
+    testServerHttpsPort = 9443
+    serverDirectory = "${project.buildDir}/wlp/usr/servers/defaultServer"
+    warContext = "${appName}"
+}
+
+liberty {
+    install {
+        // Use Open Liberty build
+        runtimeUrl='https://repo1.maven.org/maven2/io/openliberty/openliberty-runtime/17.0.0.3/openliberty-runtime-17.0.0.3.zip'
+    }
+    packageLiberty {
+        archive = "${project.buildDir}/${appName}.zip"
+        include = 'usr'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.apache.cxf:cxf-rt-rs-client:3.1.13'
+    providedCompile 'org.eclipse.microprofile:microprofile-bom:1.1.0'
+}
+
+sourceSets {
+    integrationTest
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+}
+
+assemble {
+    dependsOn libertyPackage
+}
+
+task publishServerConfig(type: Copy) {
+    mustRunAfter installLiberty
+    from 'src/main/liberty/config/'
+    into serverDirectory
+}
+
+task publishWar(type: Copy) {
+    mustRunAfter installLiberty
+    from war
+    into "${serverDirectory}/dropins"
+}
+
+task setupServer {
+    dependsOn installLiberty, publishServerConfig, publishWar
+    inputs.property 'default.http.port', testServerHttpPort
+    inputs.property 'default.https.port', testServerHttpsPort
+    def bootstrapProperties = file("${serverDirectory}/bootstrap.properties")
+    outputs.file bootstrapProperties
+    doLast {
+        bootstrapProperties.text = """#
+default.http.port=${testServerHttpPort}
+default.https.port=${testServerHttpsPort}
+"""
+    }
+}
+
+libertyStart {
+    dependsOn setupServer
+    doLast {
+        println "The server is now running at http://localhost:${testServerHttpPort}/${warContext}"
+        println "To stop the server run './gradlew libertyStop'"
+    }
+}
+
+libertyPackage {
+    dependsOn setupServer
+}
+
+task libertyIntegrationTestStart(type: net.wasdev.wlp.gradle.plugins.tasks.StartTask) {
+    description 'Starts the WebSphere Liberty Profile server for integration testing.'
+    dependsOn setupServer
+    ext.trigger = new File(temporaryDir, "trigger")
+    inputs.files trigger, {
+        integrationTest.inputs.files
+    }
+    outputs.files {
+        integrationTest.outputs.files
+    }
+    logging.level = LogLevel.DEBUG
+    doFirst {
+        didWork = true
+    }
+}
+
+task libertyIntegrationTestStop(type: net.wasdev.wlp.gradle.plugins.tasks.StopTask) {
+    description 'Stops the WebSphere Liberty Profile server for integration testing.'
+    onlyIf {
+        libertyIntegrationTestStart.didWork
+    }
+}
+
+task integrationTest(type: Test) {
+    group 'Verification'
+    description 'Runs the integration tests.'
+    dependsOn libertyIntegrationTestStart
+    finalizedBy libertyIntegrationTestStop
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    inputs.files setupServer, {
+        publishWar.inputs.files
+    }, {
+        publishServerConfig.inputs.files
+    }
+    systemProperties = ['liberty.test.port': testServerHttpPort, 'war.context': warContext]
+    testLogging {
+        exceptionFormat 'full'
+    }
+    gradle.taskGraph.afterTask { Task task, TaskState state ->
+        if (task == integrationTest && state.failure) {
+            libertyIntegrationTestStart.trigger.text = new Date()
+        }
+    }
+}
+
+check {
+    dependsOn integrationTest
+}
+
+task wrapper(type: Wrapper) {
+    jarFile = rootProject.file('.gradle-wrapper/gradle-wrapper.jar')
+}
