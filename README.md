@@ -1,3 +1,5 @@
+*Read this in other languages: [中国](README-cn.md).*
+
 [![Build Status](https://travis-ci.org/IBM/java-microprofile-config.svg?branch=master)](https://travis-ci.org/IBM/java-microprofile-config)
 
 # Using MicroProfile Config API
