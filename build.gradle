@@ -114,7 +114,7 @@ task libertyIntegrationTestStart(type: net.wasdev.wlp.gradle.plugins.tasks.Start
     inputs.files trigger, {
         integrationTest.inputs.files
     }
-    outputs.files {
+    outputs.dirs {
         integrationTest.outputs.files
     }
     logging.level = LogLevel.DEBUG
@@ -149,6 +149,6 @@ check {
     dependsOn integrationTest
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     jarFile = rootProject.file('.gradle-wrapper/gradle-wrapper.jar')
 }
