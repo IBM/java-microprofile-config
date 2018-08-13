@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:1.0.1'
+        classpath 'net.wasdev.wlp.gradle.plugins:liberty-gradle-plugin:2.5'
     }
 }
 
@@ -22,17 +22,15 @@ ext {
     appName = 'Config'
     testServerHttpPort = 9080
     testServerHttpsPort = 9443
-    serverDirectory = "${buildDir}/wlp/usr/servers/defaultServer"
     warContext = "${appName}"
 }
 
 liberty {
-    install {
-        // Use Open Liberty build
-        runtimeUrl='https://repo1.maven.org/maven2/io/openliberty/openliberty-runtime/17.0.0.3/openliberty-runtime-17.0.0.3.zip'
+    server {
+        configDirectory = file('src/main/liberty/config')
+        bootstrapProperties = ['default.http.port':testServerHttpPort, 'default.https.port':testServerHttpsPort]
     }
     packageLiberty {
-        archive = "${buildDir}/${appName}.zip"
         include = 'usr'
     }
 }
@@ -54,57 +52,23 @@ dependencies {
     providedCompile 'org.eclipse.microprofile:microprofile-bom:1.1.0'
     testCompile 'junit:junit:4.12'
     integrationTestRuntime 'org.apache.cxf:cxf-rt-rs-client:3.1.13'
+    libertyRuntime 'io.openliberty:openliberty-runtime:17.0.0.3'
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-assemble {
-    dependsOn libertyPackage
-}
-
-task publishServerConfig(type: Copy) {
-    mustRunAfter installLiberty
-    from 'src/main/liberty/config/'
-    into serverDirectory
-}
-
-task publishWar(type: Copy) {
-    mustRunAfter installLiberty
-    from war
-    into "${serverDirectory}/dropins"
-}
-
-task setupServer {
-    dependsOn installLiberty, publishServerConfig, publishWar
-    inputs.property 'default.http.port', testServerHttpPort
-    inputs.property 'default.https.port', testServerHttpsPort
-    def bootstrapProperties = file("${serverDirectory}/bootstrap.properties")
-    outputs.file bootstrapProperties
-    doLast {
-        bootstrapProperties.text = """#
-default.http.port=${testServerHttpPort}
-default.https.port=${testServerHttpsPort}
-"""
-    }
-}
-
 libertyStart {
-    dependsOn setupServer
     doLast {
         println "The server is now running at http://localhost:${testServerHttpPort}/${warContext}"
         println "To stop the server run './gradlew libertyStop'"
     }
 }
 
-libertyPackage {
-    dependsOn setupServer
-}
-
 task libertyIntegrationTestStart(type: net.wasdev.wlp.gradle.plugins.tasks.StartTask) {
     description 'Starts the WebSphere Liberty Profile server for integration testing.'
-    dependsOn setupServer
+    dependsOn libertyCreate, installApps
     def trigger = new File(temporaryDir, 'trigger')
     gradle.taskGraph.afterTask { Task task, TaskState taskState ->
         if (task == integrationTest && taskState.failure) {
@@ -134,11 +98,7 @@ task integrationTest(type: Test) {
     finalizedBy libertyIntegrationTestStop
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
-    inputs.files setupServer, {
-        publishWar.inputs.files
-    }, {
-        publishServerConfig.inputs.files
-    }
+    inputs.files installApps
     systemProperties = ['liberty.test.port': testServerHttpPort, 'war.context': warContext]
     testLogging {
         exceptionFormat 'full'
