@@ -96,7 +96,7 @@ task integrationTest(type: Test) {
     description 'Runs the integration tests.'
     dependsOn libertyIntegrationTestStart
     finalizedBy libertyIntegrationTestStop
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    testClassesDirs = files(tasks.getByName(sourceSets.integrationTest.compileJavaTaskName).destinationDir)
     classpath = sourceSets.integrationTest.runtimeClasspath
     inputs.files installApps
     systemProperties = ['liberty.test.port': testServerHttpPort, 'war.context': warContext]
