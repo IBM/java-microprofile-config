@@ -8,7 +8,7 @@ The application in this repository demonstrates the features of the [MicroProfil
 
 Most applications need to be configured based on a running environment. It must be possible to modify configuration data from outside an application so that the application itself does not need to be repackaged.
 
-The configuration data can come from different locations and in different formats. For example, system properties, system environment variables, properties files or resources, XML files or resources, and even datasources. MicroProfile Config calls these sources of configuration data ConfigSources. Since the same configuration property could be defined in multiple ConfigSources, a prioritization can be used to determine which ConfigSource is used for the configuration property value.
+The configuration data can come from different locations and in different formats. For example, system properties, system environment variables, properties files or resources, XML files or resources, and even data sources. MicroProfile Config calls these sources of configuration data ConfigSources. Since the same configuration property could be defined in multiple ConfigSources, a prioritization can be used to determine which ConfigSource is used for the configuration property value.
 
 Sometimes configuration values can change dynamically. Applications need to be able to access the latest configuration values without the need to be restarted. This is particularly important for microservices running in a cloud environment. MicroProfile Config support dynamically updating configuration values.
 
@@ -44,47 +44,18 @@ Then, build the code with Gradle. This will also run tests to make sure everythi
 
 ```console
 $ ./gradlew build
-:installLiberty
-:publishServerConfig
-:compileJava
-:processResources
-:classes
-:war
-:publishWar
-:setupServer
-:libertyPackage
-:assemble
-:compileIntegrationTestJava
-:processIntegrationTestResources NO-SOURCE
-:integrationTestClasses
-:libertyIntegrationTestStart
-:integrationTest
-:libertyIntegrationTestStop
-:compileTestJava NO-SOURCE
-:processTestResources NO-SOURCE
-:testClasses UP-TO-DATE
-:test NO-SOURCE
-:check
-:build
 
 BUILD SUCCESSFUL in 14s
-12 actionable tasks: 12 executed
+10 actionable tasks: 10 executed
 ```
 
 If you want to import the code into an Eclipse project, run the Gradle `eclipse` task to create the Eclipse metatdata. If you change the project dependencies in the `build.gradle` file, you can use the `eclipse` task to recreate/update the Eclipse metatdata.
 
 ```console
 $ ./gradlew eclipse
-:eclipseClasspath
-:eclipseJdt
-:eclipseProject
-:eclipseWtpComponent
-:eclipseWtpFacet
-:eclipseWtp
-:eclipse
 
 BUILD SUCCESSFUL in 0s
-5 actionable tasks: 5 executed
+7 actionable tasks: 7 executed
 ```
 
 And then use File->Import... on Eclipse menu and select the import wizard Existing Projects into Workspace.
@@ -110,35 +81,22 @@ To run the application, you must start it in the Open Liberty server. This is do
 
 ```console
 $ ./gradlew libertyStart
-:installLiberty
-:publishServerConfig UP-TO-DATE
-:compileJava UP-TO-DATE
-:processResources UP-TO-DATE
-:classes UP-TO-DATE
-:war UP-TO-DATE
-:publishWar UP-TO-DATE
-:setupServer UP-TO-DATE
 :libertyStart
 The server is now running at http://localhost:9080/Config
 To stop the server run './gradlew libertyStop'
 
 BUILD SUCCESSFUL in 3s
-8 actionable tasks: 2 executed, 6 up-to-date
+7 actionable tasks: 4 executed, 3 up-to-date
 ```
 
-If you modify the application to try something out, you can build and redeploy the application into the running Open Libery server using the `publishWar` task.
+If you modify the application to try something out, you can build and redeploy the application into the running Open Libery server using the `installApps` task.
 
 
 ```console
-$ ./gradlew publishWar
-:compileJava
-:processResources UP-TO-DATE
-:classes
-:war
-:publishWar
+$ ./gradlew installApps
 
 BUILD SUCCESSFUL in 0s
-4 actionable tasks: 3 executed, 1 up-to-date
+6 actionable tasks: 5 executed, 1 up-to-date
 ```
 
 When you are done with the using the application, stop the Open Liberty server.
@@ -248,15 +206,10 @@ When injecting fields, the default configuration property name consists of the J
 So, if you edit the `application.rest.ConfigRestEndpoint.pretty` property value in the resource [META-INF/microprofile-config.properties](src/main/webapp/META-INF/microprofile-config.properties), changing it from `true` to `false`, and redeploy the application, you can see that the output is no longer in pretty format.
 
 ```console
-$ ./gradlew publishWar
-:compileJava
-:processResources UP-TO-DATE
-:classes
-:war
-:publishWar
+$ ./gradlew installApps
 
 BUILD SUCCESSFUL in 4s
-4 actionable tasks: 3 executed, 1 up-to-date
+6 actionable tasks: 5 executed, 1 up-to-date
 
 $ curl http://localhost:9080/Config/rest/config/application.rest.ConfigRestEndpoint.pretty
 {"application.rest.ConfigRestEndpoint.pretty":"false"}
@@ -298,8 +251,8 @@ Each time you call `get()` on the injected `Provider`, the configuration propert
 ## References
 
 * [Eclipse MicroProfile](http://microprofile.io)
-* [MicroProfile Config 1.1 specification](https://github.com/eclipse/microprofile-config/releases/download/1.1/microprofile-config-spec.pdf)
-* [Eclipse MicroProfile specifications](https://github.com/eclipse/microprofile-bom/releases)
+* [MicroProfile Config specifications](https://github.com/eclipse/microprofile-config/releases)
+* [Eclipse MicroProfile specifications](https://github.com/eclipse/microprofile/releases)
 
 # License
 

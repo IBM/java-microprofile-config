@@ -44,47 +44,18 @@ $ cd java-microprofile-config
 
 ```console
 $ ./gradlew build
-:installLiberty
-:publishServerConfig
-:compileJava
-:processResources
-:classes
-:war
-:publishWar
-:setupServer
-:libertyPackage
-:assemble
-:compileIntegrationTestJava
-:processIntegrationTestResources NO-SOURCE
-:integrationTestClasses
-:libertyIntegrationTestStart
-:integrationTest
-:libertyIntegrationTestStop
-:compileTestJava NO-SOURCE
-:processTestResources NO-SOURCE
-:testClasses UP-TO-DATE
-:test NO-SOURCE
-:check
-:build
 
 BUILD SUCCESSFUL in 14s
-12 actionable tasks: 12 executed
+10 actionable tasks: 10 executed
 ```
 
 如果您想将代码导入到一个 Eclipse 项目中，可以运行 Gradle `eclipse` 任务来创建 Eclipse 元数据。如果您更改 `build.gradle` 文件中的项目依赖项，可以使用 `eclipse` 任务重新创建/更新 Eclipse 元数据。
 
 ```console
 $ ./gradlew eclipse
-:eclipseClasspath
-:eclipseJdt
-:eclipseProject
-:eclipseWtpComponent
-:eclipseWtpFacet
-:eclipseWtp
-:eclipse
 
 BUILD SUCCESSFUL in 0s
-5 actionable tasks: 5 executed
+7 actionable tasks: 7 executed
 ```
 
 然后使用 Eclipse 菜单上的 File->Import，并选择导入向导 Existing Projects into Workspace。
@@ -110,35 +81,22 @@ BUILD SUCCESSFUL in 0s
 
 ```console
 $ ./gradlew libertyStart
-:installLiberty
-:publishServerConfig UP-TO-DATE
-:compileJava UP-TO-DATE
-:processResources UP-TO-DATE
-:classes UP-TO-DATE
-:war UP-TO-DATE
-:publishWar UP-TO-DATE
-:setupServer UP-TO-DATE
 :libertyStart
 The server is now running at http://localhost:9080/Config
 To stop the server run './gradlew libertyStop'
 
 BUILD SUCCESSFUL in 3s
-8 actionable tasks: 2 executed, 6 up-to-date
+7 actionable tasks: 4 executed, 3 up-to-date
 ```
 
-如果修改该应用程序来尝试某种功能，可以构建该应用程序，并使用 `publishWar` 任务将应用程序重新部署到运行的 Open Libery 服务器。
+如果修改该应用程序来尝试某种功能，可以构建该应用程序，并使用 `installApps` 任务将应用程序重新部署到运行的 Open Libery 服务器。
 
 
 ```console
-$ ./gradlew publishWar
-:compileJava
-:processResources UP-TO-DATE
-:classes
-:war
-:publishWar
+$ ./gradlew installApps
 
 BUILD SUCCESSFUL in 0s
-4 actionable tasks: 3 executed, 1 up-to-date
+6 actionable tasks: 5 executed, 1 up-to-date
 ```
 
 使用完该应用程序后，停止 Open Liberty 服务器。
@@ -248,15 +206,10 @@ public class ConfigRestEndpoint {
 所以，如果您编辑资源 [META-INF/microprofile-config.properties](src/main/webapp/META-INF/microprofile-config.properties) 中的 `application.rest.ConfigRestEndpoint.pretty` 属性值，将它从 `true` 更改为 `false`，并重新部署该应用程序，您可以看到输出不再具有美观的格式。
 
 ```console
-$ ./gradlew publishWar
-:compileJava
-:processResources UP-TO-DATE
-:classes
-:war
-:publishWar
+$ ./gradlew installApps
 
 BUILD SUCCESSFUL in 4s
-4 actionable tasks: 3 executed, 1 up-to-date
+6 actionable tasks: 5 executed, 1 up-to-date
 
 $ curl http://localhost:9080/Config/rest/config/application.rest.ConfigRestEndpoint.pretty
 {"application.rest.ConfigRestEndpoint.pretty":"false"}
@@ -298,8 +251,8 @@ Time[4] 2017-09-29 15:34:04.218
 ## 参考资料
 
 * [Eclipse MicroProfile](http://microprofile.io)
-* [MicroProfile Config 1.1 规范](https://github.com/eclipse/microprofile-config/releases/download/1.1/microprofile-config-spec.pdf)
-* [Eclipse MicroProfile 规范](https://github.com/eclipse/microprofile-bom/releases)
+* [MicroProfile Config specifications](https://github.com/eclipse/microprofile-config/releases)
+* [Eclipse MicroProfile specifications](https://github.com/eclipse/microprofile/releases)
 
 # 许可
 
