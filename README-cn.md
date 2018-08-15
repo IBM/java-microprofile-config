@@ -26,10 +26,10 @@
 
 ## 步骤
 
-1. [获取并构建样本代码](#1-get-and-build-the-sample-code)
-1. [更改上下文根目录和端口（可选）](#2-changing-the-context-root-and-port-optional)
-1. [启动应用程序](#3-starting-the-application)
-1. [使用 MicroProfile Config API](#4-using-the-microprofile-config-api)
+1. [获取并构建样本代码](#1获取并构建样本代码)
+1. [更改上下文根目录和端口（可选）](#2更改上下文根目录和端口可选)
+1. [启动应用程序](#3启动应用程序)
+1. [使用 MicroProfile Config API](#4使用-microprofile-config-api)
 
 # 1.获取并构建样本代码
 
@@ -251,8 +251,8 @@ Time[4] 2017-09-29 15:34:04.218
 ## 参考资料
 
 * [Eclipse MicroProfile](http://microprofile.io)
-* [MicroProfile Config specifications](https://github.com/eclipse/microprofile-config/releases)
-* [Eclipse MicroProfile specifications](https://github.com/eclipse/microprofile/releases)
+* [MicroProfile Config 规范](https://github.com/eclipse/microprofile-config/releases)
+* [Eclipse MicroProfile 规范](https://github.com/eclipse/microprofile/releases)
 
 # 许可
 
