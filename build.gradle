@@ -52,7 +52,7 @@ dependencies {
     providedCompile 'org.eclipse.microprofile:microprofile:1.3'
     testCompile 'junit:junit:4.12'
     integrationTestRuntime 'org.apache.cxf:cxf-rt-rs-client:3.1.13'
-    libertyRuntime 'io.openliberty:openliberty-runtime:18.0.0.2'
+    libertyRuntime 'io.openliberty:openliberty-runtime:18.0.0.3'
 }
 
 tasks.withType(JavaCompile) {
